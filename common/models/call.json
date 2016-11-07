@@ -1,0 +1,19 @@
+{
+  "name": "Call",
+  "plural": "calls",
+  "base": "AppModel",
+  "properties": {
+    "caller_id": {
+      "type": "int",
+      "required": true
+    },
+    "token": {
+      "type": "string",
+      "required":true
+    },
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}
