@@ -6,7 +6,9 @@ module.exports = function (Call) {
   Call.new= function (req, res, cb) {
     opentok = new OpenTok(process.env.opentok_key, process.env.opentok_secret);
     opentok.createSession(function(err, session) {
-      if (err) return console.log(err);
+        if (err) {
+            cb('Opentok error', null);
+        }
       // save the sessionId
       var data = {
         'status':'Incoming',
@@ -14,9 +16,9 @@ module.exports = function (Call) {
         'token':session.sessionId
       };
       Call.updateOrCreate(data, function (err, list) {
+        res.opentok = opentok.generateToken(session.sessionId);
         cb(null, list);
       });
-      db.save('session', session.sessionId, done);
     });
   };
 
