@@ -11,6 +11,10 @@
       "type": "string",
       "required":true
     },
+    "status": {
+        "type":"status",
+        "required":true
+    }
   },
   "validations": [],
   "relations": {},
