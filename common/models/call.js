@@ -1,10 +1,23 @@
 'use strict';
 var OpenTok = require('opentok'),
-    opentok = new OpenTok(process.env.opentok_key, process.env.opentok_secret);
 
 module.exports = function (Call) {
 
-  Call.new= function () {
+  Call.new= function (req, res, cb) {
+    opentok = new OpenTok(process.env.opentok_key, process.env.opentok_secret);
+    opentok.createSession(function(err, session) {
+      if (err) return console.log(err);
+      // save the sessionId
+      var data = {
+        'status':'Incoming',
+        'caller_id':app.currentUser.id,
+        'token':session.sessionId
+      };
+      Call.updateOrCreate(data, function (err, list) {
+        cb(null, list);
+      });
+      db.save('session', session.sessionId, done);
+    });
   };
 
   Call.remoteMethod('new', {
