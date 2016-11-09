@@ -1,6 +1,8 @@
 'use strict';
+var OpenTok = require('opentok'),
+    opentok = new OpenTok(process.env.opentok_key, process.env.opentok_secret);
 
-module.exports = function (Post) {
+module.exports = function (Call) {
 
   Call.new= function () {
   };
