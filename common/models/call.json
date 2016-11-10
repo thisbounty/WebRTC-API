@@ -3,8 +3,8 @@
   "plural": "calls",
   "base": "AppModel",
   "properties": {
-    "caller_id": {
-      "type": "int",
+    "caller": {
+      "type": "object",
       "required": true
     },
     "token": {
@@ -12,7 +12,7 @@
       "required":true
     },
     "status": {
-        "type":"status",
+        "type":"string",
         "required":true
     }
   },

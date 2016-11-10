@@ -85,5 +85,9 @@
   "Meta": {
     "dataSource": "db",
     "public": true
+  },
+  "Call": {
+    "dataSource": "db",
+    "public": true
   }
 }

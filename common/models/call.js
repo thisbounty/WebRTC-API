@@ -1,5 +1,5 @@
 'use strict';
-var OpenTok = require('opentok'),
+var OpenTok = require('opentok');
 
 module.exports = function (Call) {
 
