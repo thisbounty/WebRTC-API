@@ -41,7 +41,11 @@ module.exports = function (Call) {
   }); // Call.remoteMethod
 
   Call.connect= function (req, res, cb) {
-      cb(null);
+      var app = req.app;
+      app.currentUser = null;
+      if (!req.accessToken) return cb('Authorization Required');
+      req.accessToken.user(function(err, user) {
+      }); // req.accessToken.user
   }; // Call.new
 
   Call.remoteMethod('connect', {
