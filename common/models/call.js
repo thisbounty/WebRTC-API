@@ -45,6 +45,12 @@ module.exports = function (Call) {
       app.currentUser = null;
       if (!req.accessToken) return cb('Authorization Required');
       req.accessToken.user(function(err, user) {
+          Call.findById(req.param('id'), function(err, call){
+              if(err) return cb(err);
+              call.status='Connected';
+              call.save();
+              cb(null, call);
+          }); // findById
       }); // req.accessToken.user
   }; // Call.new
 
