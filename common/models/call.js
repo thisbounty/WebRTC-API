@@ -40,4 +40,17 @@ module.exports = function (Call) {
     returns: {arg:'call',type:'object'}
   }); // Call.remoteMethod
 
+  Call.connect= function (req, res, cb) {
+      cb(null);
+  }; // Call.new
+
+  Call.remoteMethod('connect', {
+    http: {path: '/connect', verb: 'get'},
+    accepts: [
+     {arg: 'req', type: 'object', 'http': {source: 'req'}},
+     {arg: 'res', type: 'object', 'http': {source: 'res'}}
+    ],
+    returns: {arg:'call',type:'object'}
+  }); // Call.remoteMethod
+
 }; // module.exports
