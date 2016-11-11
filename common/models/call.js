@@ -13,7 +13,7 @@ module.exports = function (Call) {
       // save the sessionId
       var app = req.app;
       app.currentUser = null;
-      if (!req.accessToken) return cb(null, {});
+      if (!req.accessToken) return cb('Authorization Required');
       req.accessToken.user(function(err, user) {
           var data = {
             'status':'Incoming',
