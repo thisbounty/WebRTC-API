@@ -13,11 +13,15 @@ module.exports = function (Call) {
       // save the sessionId
       var data = {
         'status':'Incoming',
-        'caller_id':1,
+        'caller':1,
         'token':opentok.generateToken(session.sessionId)
       };
       Call.updateOrCreate(data, function (err, list) {
-        cb(null, data);
+        if(err) {
+            cb(err);
+        } else {
+            cb(null, data);
+        }
       });
     });
   };
