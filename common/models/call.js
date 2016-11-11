@@ -15,21 +15,21 @@ module.exports = function (Call) {
       app.currentUser = null;
       if (!req.accessToken) return cb(null, {});
       req.accessToken.user(function(err, user) {
-      var data = {
-        'status':'Incoming',
-        'caller':1,
-        'token':opentok.generateToken(session.sessionId)
-      };
-      Call.updateOrCreate(data, function (err, data) {
-        if(err) {
-            cb(err);
-        } else {
-            cb(null, data);
-        }
-      });
-    });
-    });
-  };
+          var data = {
+            'status':'Incoming',
+            'caller':1,
+            'token':opentok.generateToken(session.sessionId)
+          };
+          Call.updateOrCreate(data, function (err, data) {
+            if(err) {
+                cb(err);
+            } else {
+                cb(null, data);
+            }
+          }); // Call.updateOrCreate
+        }); // req.accessToken.user
+    }); //opentok.createSession
+  }; // Call.new
 
   Call.remoteMethod('new', {
     http: {path: '/new', verb: 'get'},
@@ -38,6 +38,6 @@ module.exports = function (Call) {
      {arg: 'res', type: 'object', 'http': {source: 'res'}}
     ],
     returns: {arg:'call',type:'object'}
-  });
+  }); // Call.remoteMethod
 
-};
+}; // module.exports
