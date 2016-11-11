@@ -1,23 +1,23 @@
 'use strict';
-var OpenTok = require('opentok');
+
+var OpenTok = require('opentok'),
+opentok = new OpenTok(process.env.opentok_key, process.env.opentok_secret);
 
 module.exports = function (Call) {
 
   Call.new= function (req, res, cb) {
-    opentok = new OpenTok(process.env.opentok_key, process.env.opentok_secret);
     opentok.createSession(function(err, session) {
         if (err) {
-            cb('Opentok error', null);
+            cb(err);
         }
       // save the sessionId
       var data = {
         'status':'Incoming',
-        'caller_id':app.currentUser.id,
-        'token':session.sessionId
+        'caller_id':1,
+        'token':opentok.generateToken(session.sessionId)
       };
       Call.updateOrCreate(data, function (err, list) {
-        res.opentok = opentok.generateToken(session.sessionId);
-        cb(null, list);
+        cb(null, data);
       });
     });
   };
@@ -28,7 +28,7 @@ module.exports = function (Call) {
      {arg: 'req', type: 'object', 'http': {source: 'req'}},
      {arg: 'res', type: 'object', 'http': {source: 'res'}}
     ],
-    returns: {arg:'call',type:'array'}
+    returns: {arg:'call',type:'object'}
   });
 
 };
