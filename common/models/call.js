@@ -11,18 +11,23 @@ module.exports = function (Call) {
             cb(err);
         }
       // save the sessionId
+      var app = req.app;
+      app.currentUser = null;
+      if (!req.accessToken) return cb(null, {});
+      req.accessToken.user(function(err, user) {
       var data = {
         'status':'Incoming',
         'caller':1,
         'token':opentok.generateToken(session.sessionId)
       };
-      Call.updateOrCreate(data, function (err, list) {
+      Call.updateOrCreate(data, function (err, data) {
         if(err) {
             cb(err);
         } else {
             cb(null, data);
         }
       });
+    });
     });
   };
 
