@@ -2,6 +2,7 @@
 
 var OpenTok = require('opentok'),
 opentok = new OpenTok(process.env.opentok_key, process.env.opentok_secret);
+var es = require('event-stream');
 
 module.exports = function (Call) {
 
@@ -40,7 +41,7 @@ module.exports = function (Call) {
     returns: {arg:'call',type:'object'}
   }); // Call.remoteMethod
 
-  Call.connect= function (req, res, cb) {
+  Call.connect= function (req, res, id, cb) {
       var app = req.app;
       app.currentUser = null;
       if (!req.accessToken) return cb('Authorization Required');
@@ -51,6 +52,9 @@ module.exports = function (Call) {
               call.save();
               cb(null, call);
           }); // findById
+          Call.createChangeStream(function(err, changes) {
+              changes.pipe(es.stringify()).pipe(process.stdout);
+          });
       }); // req.accessToken.user
   }; // Call.new
 
@@ -58,7 +62,8 @@ module.exports = function (Call) {
     http: {path: '/connect', verb: 'get'},
     accepts: [
      {arg: 'req', type: 'object', 'http': {source: 'req'}},
-     {arg: 'res', type: 'object', 'http': {source: 'res'}}
+     {arg: 'res', type: 'object', 'http': {source: 'res'}},
+     {arg: 'id', type: 'number'},
     ],
     returns: {arg:'call',type:'object'}
   }); // Call.remoteMethod
