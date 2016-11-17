@@ -68,27 +68,4 @@ module.exports = function (Call) {
     returns: {arg:'call',type:'object'}
   }); // Call.remoteMethod
 
-  Call.table = function (req, res, cb) {
-      var app = req.app;
-      app.currentUser = null;
-      if (!req.accessToken) return cb('Authorization Required');
-      req.accessToken.user(function(err, user) {
-          Call.find({}, function(err, calls){
-              if(err) return cb(err);
-
-              cb(null, call);
-          }); // find
-      }); // req.accessToken.user
-  }; // Call.new
-
-  Call.remoteMethod('table', {
-    http: {path: '/table', verb: 'get'},
-    accepts: [
-     {arg: 'req', type: 'object', 'http': {source: 'req'}},
-     {arg: 'res', type: 'object', 'http': {source: 'res'}},
-    ],
-    returns: {arg:'call',type:'object'}
-  }); // Call.remoteMethod
-
-
 }; // module.exports
