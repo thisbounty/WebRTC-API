@@ -18,7 +18,7 @@ module.exports = function (Call) {
       req.accessToken.user(function(err, user) {
           var data = {
             'status':'Incoming',
-            'caller':1,
+            'caller':user,
             'token':opentok.generateToken(session.sessionId)
           };
           Call.updateOrCreate(data, function (err, data) {

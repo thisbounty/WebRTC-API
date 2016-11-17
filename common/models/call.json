@@ -14,6 +14,11 @@
     "status": {
         "type":"string",
         "required":true
+    },
+    "created": {
+        "type":"date",
+        "required":true,
+        "defaultFn":"now"
     }
   },
   "validations": [],
