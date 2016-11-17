@@ -68,4 +68,33 @@ module.exports = function (Call) {
     returns: {arg:'call',type:'object'}
   }); // Call.remoteMethod
 
+  Call.table= function (req, res, cb) {
+      var app = req.app;
+      app.currentUser = null;
+      if (!req.accessToken) return cb('Authorization Required');
+      req.accessToken.user(function(err, user) {
+          Call.find({}, function(err, calls){
+              console.log(calls)
+              if(err) return cb(err);
+              for(var i=0; i < calls.length; i++) {
+                  //keep user details private, only show first name
+                  calls[i].callerId=calls[i].caller.id;
+                  calls[i].caller=calls[i].caller.firstName;
+              }
+              cb(null, calls);
+          }); // find
+      }); // req.accessToken.user
+  }; // Call.table
+
+  Call.remoteMethod('table', {
+    http: {path: '/table', verb: 'get'},
+    accepts: [
+     {arg: 'req', type: 'object', 'http': {source: 'req'}},
+     {arg: 'res', type: 'object', 'http': {source: 'res'}},
+    ],
+    returns: {arg:'calls',type:'array'}
+  }); // Call.remoteMethod
+
+
+
 }; // module.exports
