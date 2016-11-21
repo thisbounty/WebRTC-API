@@ -19,7 +19,8 @@ module.exports = function (Call) {
           var data = {
             'status':'Incoming',
             'caller':user,
-            'token':opentok.generateToken(session.sessionId)
+            'token':opentok.generateToken(session.sessionId),
+            'session':session.sessionId
           };
           Call.updateOrCreate(data, function (err, data) {
             if(err) {
