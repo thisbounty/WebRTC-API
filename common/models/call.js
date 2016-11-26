@@ -102,10 +102,10 @@ module.exports = function (Call) {
     app.currentUser = null;
     if (!req.accessToken) return cb(false);
     req.accessToken.user(function(err, user) {
-      Call.findById(req.param('id'), function(err, call){
+      Call.findById(1, function(err, call){
         if(call.caller.id == user.id) {
-          return cb(false);
-        } else if(call.searcher.id === user.id){
+          call.caller_heartbeat = new Date();
+        } else if(typeof(call.searcher) === 'object' && call.searcher.id === user.id){
           call.searcher_heartbeat = new Date();
         } else {
             cb(false);
@@ -122,7 +122,7 @@ module.exports = function (Call) {
       {arg: 'res', type: 'object', 'http': {source: 'res'}},
       {arg: 'id', type: 'number'},
     ],
-    returns: {arg:'call',type:'object'}
+    returns: {arg:'heartbeat',type:'bool'}
   }); // Call.remoteMethod
 
 }; // module.exports
