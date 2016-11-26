@@ -108,8 +108,11 @@ module.exports = function (Call) {
         } else if(typeof(call.searcher) === 'object' && call.searcher.id === user.id){
           call.searcher_heartbeat = new Date();
         } else {
+            //heartbeat did not run, no ownership
             cb(true, null);
         }
+        //ran successful, cb params are err, heartbeat result
+        call.save();
         cb(false, true);
       }); // findById
     }); // req.accessToken.user
