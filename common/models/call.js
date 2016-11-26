@@ -102,7 +102,7 @@ module.exports = function (Call) {
     app.currentUser = null;
     if (!req.accessToken) return cb(false);
     req.accessToken.user(function(err, user) {
-      Call.findById(1, function(err, call){
+      Call.findById(id, function(err, call){
         if(call.caller.id == user.id) {
           call.caller_heartbeat = new Date();
         } else if(typeof(call.searcher) === 'object' && call.searcher.id === user.id){
@@ -122,7 +122,7 @@ module.exports = function (Call) {
       {arg: 'res', type: 'object', 'http': {source: 'res'}},
       {arg: 'id', type: 'number'},
     ],
-    returns: {arg:'heartbeat',type:'bool'}
+    returns: {arg:'heartbeat',type:'Boolean'}
   }); // Call.remoteMethod
 
 }; // module.exports
