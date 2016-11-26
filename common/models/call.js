@@ -97,10 +97,10 @@ module.exports = function (Call) {
     returns: {arg:'calls',type:'array'}
   }); // Call.remoteMethod
 
-  Call.heartbeat = function (req,res,id,cb){
+  Call.heartbeat = function (req, res, id, cb){
     var app = req.app;
     app.currentUser = null;
-    if (!req.accessToken) return cb('Authorization Required');
+    if (!req.accessToken) return cb(false);
     req.accessToken.user(function(err, user) {
       Call.findById(req.param('id'), function(err, call){
         if(call.caller.id !== user.id && call.searcher.id !== user.id) {
@@ -110,16 +110,17 @@ module.exports = function (Call) {
         }else if(call.caller.id === user.id ){
           call.caller_heartbeat = new Date();
         };
-        cb(null, calls);
+        cb(false);
       }); // findById
     }); // req.accessToken.user
   };
 
   Call.remoteMethod('heartbeat', {
-    http: {path: '/heartbeat/:id', verb: 'get'},
+    http: {path: '/heartbeat', verb: 'get'},
     accepts: [
       {arg: 'req', type: 'object', 'http': {source: 'req'}},
       {arg: 'res', type: 'object', 'http': {source: 'res'}},
+      {arg: 'id', type: 'number'},
     ],
     returns: {arg:'call',type:'object'}
   }); // Call.remoteMethod
