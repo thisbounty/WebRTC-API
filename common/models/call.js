@@ -100,7 +100,7 @@ module.exports = function (Call) {
   Call.heartbeat = function (req, res, id, cb) {
     var app = req.app;
     app.currentUser = null;
-    if (!req.accessToken) return cb(false);
+    if (!req.accessToken) return cb(true, null);
     req.accessToken.user(function(err, user) {
       Call.findById(id, function(err, call){
         if(call.caller.id == user.id) {
@@ -108,9 +108,9 @@ module.exports = function (Call) {
         } else if(typeof(call.searcher) === 'object' && call.searcher.id === user.id){
           call.searcher_heartbeat = new Date();
         } else {
-            cb(false);
+            cb(true, null);
         }
-        cb(true);
+        cb(false, true);
       }); // findById
     }); // req.accessToken.user
   };
