@@ -50,6 +50,7 @@ module.exports = function (Call) {
           Call.findById(req.param('id'), function(err, call){
               if(err) return cb(err);
               call.status='Connected';
+              call.searcher = user;
               call.save();
               cb(null, call);
           }); // findById
@@ -96,6 +97,31 @@ module.exports = function (Call) {
     returns: {arg:'calls',type:'array'}
   }); // Call.remoteMethod
 
+  Call.heartbeat = function (req,res,id,cb){
+    var app = req.app;
+    app.currentUser = null;
+    if (!req.accessToken) return cb('Authorization Required');
+    req.accessToken.user(function(err, user) {
+      Call.findById(req.param('id'), function(err, call){
+        if(call.caller.id !== user.id && call.searcher.id !== user.id) {
+          return cb(false);
+        }else if(call.searcher.id === user.id){
+          call.searcher_heartbeat = new Date();
+        }else if(call.caller.id === user.id ){
+          call.caller_heartbeat = new Date();
+        };
+        cb(null, calls);
+      }); // findById
+    }); // req.accessToken.user
+  };
 
+  Call.remoteMethod('heartbeat', {
+    http: {path: '/heartbeat/:id', verb: 'get'},
+    accepts: [
+      {arg: 'req', type: 'object', 'http': {source: 'req'}},
+      {arg: 'res', type: 'object', 'http': {source: 'res'}},
+    ],
+    returns: {arg:'call',type:'object'}
+  }); // Call.remoteMethod
 
 }; // module.exports
