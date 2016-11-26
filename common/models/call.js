@@ -97,20 +97,20 @@ module.exports = function (Call) {
     returns: {arg:'calls',type:'array'}
   }); // Call.remoteMethod
 
-  Call.heartbeat = function (req, res, id, cb){
+  Call.heartbeat = function (req, res, id, cb) {
     var app = req.app;
     app.currentUser = null;
     if (!req.accessToken) return cb(false);
     req.accessToken.user(function(err, user) {
       Call.findById(req.param('id'), function(err, call){
-        if(call.caller.id !== user.id && call.searcher.id !== user.id) {
+        if(call.caller.id == user.id) {
           return cb(false);
-        }else if(call.searcher.id === user.id){
+        } else if(call.searcher.id === user.id){
           call.searcher_heartbeat = new Date();
-        }else if(call.caller.id === user.id ){
-          call.caller_heartbeat = new Date();
-        };
-        cb(false);
+        } else {
+            cb(false);
+        }
+        cb(true);
       }); // findById
     }); // req.accessToken.user
   };
