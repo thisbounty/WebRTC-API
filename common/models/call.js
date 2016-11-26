@@ -112,6 +112,7 @@ module.exports = function (Call) {
             cb(true, null);
         }
         //ran successful, cb params are err, heartbeat result
+        //need to call save function
         call.save();
         cb(false, true);
       }); // findById
