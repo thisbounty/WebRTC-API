@@ -124,9 +124,44 @@ module.exports = function (Call) {
     accepts: [
       {arg: 'req', type: 'object', 'http': {source: 'req'}},
       {arg: 'res', type: 'object', 'http': {source: 'res'}},
-      {arg: 'id', type: 'number'},
+      {arg: 'id', type: 'number'}
     ],
     returns: {arg:'heartbeat',type:'Boolean'}
+  }); // Call.remoteMethod
+
+
+  Call.disconnect = function (call) {
+    call.status = 'Disconnected';
+    call.save();
+
+    Call.createChangeStream(function(err, changes) {
+      changes.pipe(es.stringify()).pipe(process.stdout);
+    });
+  };
+
+  Call.disconnectExpired = function(req, res, cb){
+    var app = req.app;
+    app.currentUser = null;
+    if (!req.accessToken) return cb('Authorization Required');
+    req.accessToken.user(function(err, user) {
+      Call.find({"where": {"status": "Connected"}}, function (data) {
+        data.forEach(function (call) {
+          if (call.caller_heartbeat > process.env.heartbeat_exp || call.searcher_heartbeat > process.env.heartbeat_exp) {
+            call.disconnect(call);
+          }
+        });
+        cb(false, true);
+      }); //find
+    }); //req.accessToken.user
+  };
+
+  Call.remoteMethod('disconnectExpired', {
+    http: {path: '/disconnectExpired', verb: 'get'},
+    accepts: [
+      {arg: 'req', type: 'object', 'http': {source: 'req'}},
+      {arg: 'res', type: 'object', 'http': {source: 'res'}}
+    ],
+    returns: {arg:'disconnectExpired',type:'Boolean'}
   }); // Call.remoteMethod
 
 }; // module.exports
