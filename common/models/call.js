@@ -97,39 +97,7 @@ module.exports = function (Call) {
     returns: {arg:'calls',type:'array'}
   }); // Call.remoteMethod
 
-  Call.heartbeat = function (req, res, id, cb) {
-    var app = req.app;
-    app.currentUser = null;
-    if (!req.accessToken) return cb(true, null);
-    req.accessToken.user(function(err, user) {
-      Call.findById(id, function(err, call){
-        if(call.caller.id == user.id) {
-          call.caller_heartbeat = new Date();
-        } else if(typeof(call.searcher) === 'object' && call.searcher.id === user.id){
-          call.searcher_heartbeat = new Date();
-        } else {
-            //heartbeat did not run, no ownership
-            cb(true, null);
-        }
-        //ran successful, cb params are err, heartbeat result
-        //need to call save function
-        call.save();
-        cb(false, true);
-      }); // findById
-    }); // req.accessToken.user
-  };
-
-  Call.remoteMethod('heartbeat', {
-    http: {path: '/heartbeat', verb: 'get'},
-    accepts: [
-      {arg: 'req', type: 'object', 'http': {source: 'req'}},
-      {arg: 'res', type: 'object', 'http': {source: 'res'}},
-      {arg: 'id', type: 'number'},
-    ],
-    returns: {arg:'heartbeat',type:'Boolean'}
-  }); // Call.remoteMethod
-
- Call.opentok = function (req, res, secret, cb) {
+  Call.opentok = function (req, res, secret, cb) {
     if(!req.body.sessionId || req.body.event !== 'ConnectionDestroyed') {
         //no sessionId sent
         cb(true, null);
@@ -162,30 +130,5 @@ module.exports = function (Call) {
       changes.pipe(es.stringify()).pipe(process.stdout);
     });
   };
-
-  Call.disconnectExpired = function(req, res, cb){
-    var app = req.app;
-    app.currentUser = null;
-    if (!req.accessToken) return cb('Authorization Required');
-    req.accessToken.user(function(err, user) {
-      Call.find({"where": {"status": "Connected"}}, function (data) {
-        data.forEach(function (call) {
-          if (call.caller_heartbeat > process.env.heartbeat_exp || call.searcher_heartbeat > process.env.heartbeat_exp) {
-            call.disconnect(call);
-          }
-        });
-        cb(false, true);
-      }); //find
-    }); //req.accessToken.user
-  };
-
-  Call.remoteMethod('disconnectExpired', {
-    http: {path: '/disconnectExpired', verb: 'get'},
-    accepts: [
-      {arg: 'req', type: 'object', 'http': {source: 'req'}},
-      {arg: 'res', type: 'object', 'http': {source: 'res'}}
-    ],
-    returns: {arg:'disconnectExpired',type:'Boolean'}
-  }); // Call.remoteMethod
 
 }; // module.exports
