@@ -130,13 +130,18 @@ module.exports = function (Call) {
   }); // Call.remoteMethod
 
  Call.opentok = function (req, res, secret, cb) {
-
+    if(!req.body.sessionId || req.body.event !== 'ConnectionDestroyed') {
+        //no sessionId sent
+        cb(true, null);
+    }
     Call.find({"where": {"session": req.body.sessionId}}, function (data) {
       data.forEach(function (call) {
         call.disconnect(call);
       });
       cb(false, true);
     });
+    //no records found
+    cb(true, null);
   };
 
   Call.remoteMethod('opentok', {
