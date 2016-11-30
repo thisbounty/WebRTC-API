@@ -103,7 +103,8 @@ module.exports = function (Call) {
         cb(true, null);
         return;
     }
-    Call.find({"where": {"session": req.body.sessionId}}, function (data) {
+    Call.find({"where": {"session": req.body.sessionId}}, function (err,data) {
+      if(err) return cb(err);
       data.forEach(function (call) {
         call.disconnect(call);
       });
