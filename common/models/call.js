@@ -124,11 +124,30 @@ module.exports = function (Call) {
     accepts: [
       {arg: 'req', type: 'object', 'http': {source: 'req'}},
       {arg: 'res', type: 'object', 'http': {source: 'res'}},
-      {arg: 'id', type: 'number'}
+      {arg: 'id', type: 'number'},
     ],
     returns: {arg:'heartbeat',type:'Boolean'}
   }); // Call.remoteMethod
 
+ Call.opentok = function (req, res, secret, cb) {
+
+    Call.find({"where": {"session": req.body.sessionId}}, function (data) {
+      data.forEach(function (call) {
+        call.disconnect(call);
+      });
+      cb(false, true);
+    });
+  };
+
+  Call.remoteMethod('opentok', {
+    http: {path: '/opentok', verb: 'post'},
+    accepts: [
+      {arg: 'req', type: 'object', 'http': {source: 'req'}},
+      {arg: 'res', type: 'object', 'http': {source: 'res'}},
+      {arg: 'secret', type: 'string'}
+    ],
+    returns: {arg:'opentok',type:'Boolean'}
+  }); // Call.remoteMethod
 
   Call.disconnect = function (call) {
     call.status = 'Disconnected';
