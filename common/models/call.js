@@ -101,6 +101,7 @@ module.exports = function (Call) {
     if(!req.body.sessionId || req.body.event !== 'ConnectionDestroyed') {
         //no sessionId sent
         cb(true, null);
+        return;
     }
     Call.find({"where": {"session": req.body.sessionId}}, function (data) {
       data.forEach(function (call) {
